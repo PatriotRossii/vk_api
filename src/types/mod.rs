@@ -93,12 +93,12 @@ impl Message {
 pub enum Attachment {
     Photo { photo: Photo },
 
-    // TODO: implement other variants of internally tagged enum via structs, not serde_json::Value
-    Sticker { sticker: serde_json::Value },
-    Video { video: serde_json::Value },
-    Wall { wall: serde_json::Value },
-    AudioMessage { audio_message: serde_json::Value },
-    Doc { doc: serde_json::Value },
+    Video { video: Video },
+    Audio { audio: Audio },
+    Doc { doc: Doc },
+    Link { link: Link },
+    Market { market: Market },
+    Wall { wall: Wall },
 }
 
 #[derive(Serialize, Debug, Clone)]
@@ -141,6 +141,34 @@ pub struct ChatUser {
 }
 
 #[derive(Deserialize, Debug, Clone)]
+pub struct Frame {
+  pub url: String,
+  pub height: u16,
+  pub width: u16,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Image {
+  #[serde(flatten)]
+  pub frame: Frame,
+  pub with_padding: Option<bool>,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Likes {
+  pub count: i32,
+  pub user_likes: bool,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Reposts {
+  pub count: i32,
+  pub wall_count: i32,
+  pub mail_count: i32,
+  pub user_reposted: bool,
+}
+
+#[derive(Deserialize, Debug, Clone)]
 pub struct Photo {
     pub id: i32,
     pub access_token: Option<String>,
@@ -153,6 +181,55 @@ pub struct Photo {
     pub sizes: Vec<Size>,
     pub width: Option<u16>,
     pub height: Option<u16>,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Video {
+  pub access_token: Option<String>,
+  
+  pub access_key: String, 
+  pub can_add: bool,
+  pub comments: i32,
+  pub date: DateTime<Utc>,
+  pub description: String,
+  pub duration: i32,
+  pub image: Vec<Image>,
+  pub width: i32,
+  pub height: i32,
+  pub id: i32,
+  pub owner_id: i32,
+  pub title: String,
+  pub is_favorite: bool,
+  pub track_code: String,
+  pub r#type: String,
+  pub views: i32,
+
+  pub adding_date: Option<DateTime<Utc>>,
+  pub local_views: Option<i32>,
+  pub player: Option<String>,
+  pub platfrom: Option<String>,
+  pub can_edit: Option<bool>,
+  pub is_private: Option<bool>,
+  pub processing: Option<bool>,
+  pub can_comment: Option<bool>,
+  pub can_like: Option<bool>,
+  pub can_repost: Option<bool>,
+  pub can_subscribe: Option<bool>,
+  pub can_add_to_faves: Option<bool>,
+  pub can_attach_link: Option<bool>,
+
+  pub user_id: Option<i32>,
+  pub converting: Option<bool>,
+  pub added: Option<bool>,
+  pub is_subscribed: Option<bool>,
+  pub repeat: Option<bool>,
+  pub balance: Option<i32>,
+  pub live_status: Option<String>,
+  pub live: Option<bool>,
+  pub upcoming: Option<bool>,
+  pub spectators: i32,
+  pub likes: Likes,
+  pub reposts: Reposts,
 }
 
 #[derive(Deserialize, Debug, Clone)]
